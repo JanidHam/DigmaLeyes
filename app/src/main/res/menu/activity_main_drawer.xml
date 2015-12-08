@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/leyes_fundamentales" android:icon="@android:drawable/ic_input_get"
+            android:title="@string/leyes_fundamentales" />
+        <item android:id="@+id/leyes" android:icon="@android:drawable/ic_input_get"
+            android:title="@string/leyes" />
+        <item android:id="@+id/codigos" android:icon="@android:drawable/ic_input_get"
+            android:title="@string/codigos" />
+        <item android:id="@+id/r_lejislativo" android:icon="@android:drawable/ic_input_get"
+            android:title="@string/r_legislativo" />
+        <item android:id="@+id/r_judicial" android:icon="@android:drawable/ic_input_get"
+            android:title="@string/r_judicial" />
+        <item android:id="@+id/r_dependencias" android:icon="@android:drawable/ic_input_get"
+            android:title="@string/r_dependencias" />
+    </group>
+
+    <item android:title="@string/action_settings">
+        <menu>
+            <item android:id="@+id/email" android:icon="@android:drawable/ic_dialog_email"
+                android:title="@string/email" />
+
+        </menu>
+    </item>
+
+</menu>
