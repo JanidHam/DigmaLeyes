@@ -50,11 +50,10 @@
 
     <ImageView
         android:id="@+id/banner_bottom"
-        android:layout_width="300dp"
+        android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:src="@android:drawable/dialog_holo_light_frame"
-        android:scaleType="centerCrop"/>
+
+        android:adjustViewBounds="true"/>
 
 </RelativeLayout>

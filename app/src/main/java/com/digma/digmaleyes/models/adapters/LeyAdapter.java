@@ -1,16 +1,24 @@
 package com.digma.digmaleyes.models.adapters;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.digma.digmaleyes.DownLoadManagerHelper;
 import com.digma.digmaleyes.R;
+import com.digma.digmaleyes.helpers.SendEmail;
+import com.digma.digmaleyes.helpers.Utils;
 import com.digma.digmaleyes.models.Ley;
 
 import java.util.List;
@@ -21,6 +29,7 @@ import java.util.List;
 public class LeyAdapter extends RecyclerView.Adapter<LeyAdapter.LeyViewHolder> {
     private List<Ley> items;
     private DownLoadManagerHelper downLoadHelper;
+    private Utils utils;
 
     public static class LeyViewHolder extends RecyclerView.ViewHolder {
         // Campos respectivos de un item
@@ -48,6 +57,7 @@ public class LeyAdapter extends RecyclerView.Adapter<LeyAdapter.LeyViewHolder> {
     public LeyAdapter(List<Ley> items, Activity context) {
         this.items = items;
         downLoadHelper = new DownLoadManagerHelper(context);
+        utils = new Utils(context);
     }
 
 
@@ -61,19 +71,66 @@ public class LeyAdapter extends RecyclerView.Adapter<LeyAdapter.LeyViewHolder> {
     @Override
     public void onBindViewHolder(LeyViewHolder holder, final int i) {
         holder.nombre.setText(items.get(i).getName());
-        final String url = "http://congresocam.com/docs/14leginf.pdf";
+
+        final String url = utils.getContext().getString(R.string.url_download_pdf);
 
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                downLoadHelper.startDownload(url, "test.pdf");
-                Log.e("i", "click on download in position " + items.get(i).getUrl());
+            downLoadHelper.startDownload(url + items.get(i).getUrl(), items.get(i).getName());
             }
         });
         holder.send.setOnClickListener(new View.OnClickListener() {
+            Activity context = utils.getContext();
             @Override
             public void onClick(View v) {
-                //downLoadHelper.startDownload(url, items.get(i).getName() + ".pdf");
+                String email = utils.isDefaultEmail();
+
+                if (!email.equals("")) {
+                    String document_name = items.get(i).getUrl();
+                    String document = items.get(i).getName();
+                    new SendEmail(email, document, document_name, context)
+                            .execute(utils.getURL_SEND_EMAIL());
+                }
+
+
+                final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                // Get the layout inflater
+                final LayoutInflater inflater = context.getLayoutInflater();
+                builder.setTitle("Escriba el correo!");
+                builder.setView(inflater.inflate(R.layout.dialog_message, null))
+                        // Add action buttons
+                        .setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                Dialog f = (Dialog) dialog;
+
+                                EditText editText = (EditText) f.findViewById(R.id.email_to_send);
+
+                                String email = editText.getText().toString();
+
+                                if (!utils.isValidEmail(email)) {
+                                    utils.renderMessage("Debe ingresar un email.", Toast.LENGTH_SHORT);
+                                    return;
+                                }
+                                utils.renderMessage("Enviando mensaje.", Toast.LENGTH_SHORT);
+
+                                String document_name = items.get(i).getUrl();
+                                String document = items.get(i).getName();
+                                new SendEmail(email, document, document_name, context)
+                                        .execute(utils.getURL_SEND_EMAIL());
+
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //LoginDialogFragment.this.getDialog().cancel();
+                            }
+                        });
+
+                builder.create();
+                builder.show();
+
                 Log.e("i", "click in send in position " + items.get(i).getUrl());
             }
         });

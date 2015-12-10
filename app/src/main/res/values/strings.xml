@@ -13,6 +13,11 @@
     <string name="success_save_config_email">La configuración del email se guardó con éxito.</string>
     <string name="error_save_config_email">Debe agregar un email antes de marcar el checkbox.</string>
 
+    <string name="email_to_send">Ingrese el correo al cual se enviará el pdf..</string>
+
+    <string name="send">Enviar</string>
+    <string name="cancel">Cancelar</string>
+
     <string name="search">Escriba un tag para buscar.. (Ej. Ley)</string>
     <!-- menu items name -->
 
@@ -23,5 +28,9 @@
     <string name="r_legislativo">Reglamentos del Poder Legislativo</string>
     <string name="r_judicial">Reglamentos del Poder Judicial</string>
     <string name="r_dependencias">Reglamentos de Dependencias y Organismos</string>
+
+
+
+    <string name="url_download_pdf">http://digma.mx/pruebasalex/</string>
 
 </resources>

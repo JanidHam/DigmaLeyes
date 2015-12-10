@@ -155,11 +155,14 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         Log.i("Resume", "activity resume");
 
+        new DownloadImageTask((ImageView) findViewById(R.id.banner_bottom))
+                .execute("http://digma.mx/pruebasalex/banner.php");
+
         //new DownloadImageTask((ImageView) findViewById(R.id.banner_bottom))
         //        .execute("http://2.bp.blogspot.com/-_ONfxvk_A-8/VPHsRP8jO3I/AAAAAAADkvk/Vy8_gFIOY9w/s1600/9%2B(1).png");
 
-        new DownloadImageTask((ImageView) findViewById(R.id.banner_center))
-                .execute("https://dardomixcomunicacional.files.wordpress.com/2012/09/banner-vertical.png");
+        //new DownloadImageTask((ImageView) findViewById(R.id.banner_center))
+        //        .execute("https://dardomixcomunicacional.files.wordpress.com/2012/09/banner-vertical.png");
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -175,24 +178,27 @@ public class MainActivity extends AppCompatActivity
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
+                Log.i("stream", in.toString());
+                Log.i("stream", mIcon11.getByteCount() + "");
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
             }
+
             return mIcon11;
         }
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
-            toogleRecyclerView(false);
-            toogleBannerCenter(true);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            //toogleRecyclerView(false);
+            //toogleBannerCenter(true);
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 findViewById(R.id.main_layout)
                         .setBackground(getDrawable(R.color.cardview_dark_background));
             } else {
                 findViewById(R.id.main_layout)
                         .setBackgroundDrawable(getDrawable(R.color.cardview_dark_background));
-            }
+            }*/
         }
     }
 
