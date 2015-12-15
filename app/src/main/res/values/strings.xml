@@ -1,9 +1,11 @@
 <resources>
+    <!-- app settings -->
     <string name="app_name">Digma Leyes</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- layouts app -->
     <string name="action_settings">Configuración</string>
     <string name="email">Correo</string>
 
@@ -19,8 +21,8 @@
     <string name="cancel">Cancelar</string>
 
     <string name="search">Escriba un tag para buscar.. (Ej. Ley)</string>
-    <!-- menu items name -->
 
+    <!-- menu items name -->
     <string name="leyes_fundamentales">Leyes Fundamentales</string>
     <string name="leyes">Leyes</string>
     <string name="codigos">Codigos</string>
@@ -29,8 +31,9 @@
     <string name="r_judicial">Reglamentos del Poder Judicial</string>
     <string name="r_dependencias">Reglamentos de Dependencias y Organismos</string>
 
-
-
-    <string name="url_download_pdf">http://digma.mx/pruebasalex/</string>
+    <!-- server -->
+    <string name="url_server">http://digma.mx/congreso/</string>
+    <string name="url_send_email">http://digma.mx/congreso/mail.php</string>
+    <string name="url_download_pdf">http://digma.mx/congreso/</string>
 
 </resources>

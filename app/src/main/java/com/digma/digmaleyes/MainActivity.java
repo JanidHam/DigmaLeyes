@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.digma.digmaleyes.db.DataBaseAdapter;
+import com.digma.digmaleyes.helpers.Utils;
 import com.digma.digmaleyes.models.Ley;
 import com.digma.digmaleyes.models.adapters.LeyAdapter;
 
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity
     public static final String CHECK_EMAIL = "check_email";
     public static final String DEFAULT_EMAIL = "default_email";
 
+    Utils utils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         default_email_txt = (EditText) findViewById(R.id.default_email);
         check_email = (CheckBox) findViewById(R.id.check_default_email);
         btn_save_email_config = (Button) findViewById(R.id.btn_config_email);
-        btn_banner_center = (ImageButton) findViewById(R.id.btn_banner_center);
+        btn_banner_center = (ImageButton) findViewById(R.id.btn_banner_main);
         banner_bottom = (ImageView) findViewById(R.id.banner_bottom);
         banner_center = (ImageView) findViewById(R.id.banner_center);
 
@@ -85,6 +88,8 @@ public class MainActivity extends AppCompatActivity
         this.setRecycler();
 
         drawerTitle = getResources().getString(R.string.leyes_fundamentales);
+
+        utils = new Utils(this);
 
         if (savedInstanceState == null) {
             this.initDataBase();
@@ -115,13 +120,15 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.i("Change text", s.toString());
                 mDbHelper.open();
 
                 String table = getTableName(getTitle().toString());
                 String where = "WHERE tags LIKE '%" + s.toString().toLowerCase().trim() + "%'";
 
-                fillAdapter(mDbHelper.filterFrom(table, where));
+                if (search_txt.getText().toString().trim().equals(""))
+                    fillAdapter(mDbHelper.selectAllFrom(table));
+                else
+                    fillAdapter(mDbHelper.filterFrom(table, where));
 
                 mDbHelper.close();
             }
@@ -132,21 +139,20 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 toogleBannerCenter(false);
                 toogleRecyclerView(true);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        findViewById(R.id.main_layout)
-                                .setBackground(getDrawable(R.color.background));
-                    }
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        findViewById(R.id.main_layout)
-                                .setBackgroundDrawable(getDrawable(R.color.background));
-                    }
-                }
             }
         });
 
+        //utils.setTimeOutCloseBanner(5000);
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        toogleRecyclerView(true);
+                        toogleBannerCenter(false);
+                        Log.i("tag", "This'll run 300 milliseconds later");
+                    }
+                },
+                3000);
 
     }
 
@@ -155,7 +161,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         Log.i("Resume", "activity resume");
 
-        new DownloadImageTask((ImageView) findViewById(R.id.banner_bottom))
+        new DownloadImageTask((ImageView) findViewById(R.id.banner_bottom), false)
                 .execute("http://digma.mx/pruebasalex/banner.php");
 
         //new DownloadImageTask((ImageView) findViewById(R.id.banner_bottom))
@@ -167,9 +173,11 @@ public class MainActivity extends AppCompatActivity
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
+        boolean isMainImage;
 
-        public DownloadImageTask(ImageView bmImage) {
+        public DownloadImageTask(ImageView bmImage, boolean mainImage) {
             this.bmImage = bmImage;
+            this.isMainImage = mainImage;
         }
 
         protected Bitmap doInBackground(String... urls) {
@@ -190,15 +198,20 @@ public class MainActivity extends AppCompatActivity
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
-            //toogleRecyclerView(false);
-            //toogleBannerCenter(true);
-            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                findViewById(R.id.main_layout)
-                        .setBackground(getDrawable(R.color.cardview_dark_background));
-            } else {
-                findViewById(R.id.main_layout)
-                        .setBackgroundDrawable(getDrawable(R.color.cardview_dark_background));
-            }*/
+            if (this.isMainImage) {
+                toogleRecyclerView(false);
+                toogleBannerCenter(true);
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                toogleRecyclerView(true);
+                                toogleBannerCenter(false);
+                                Log.i("tag", "This'll run 300 milliseconds later");
+                            }
+                        },
+                        5000);
+            }
+
         }
     }
 
@@ -312,7 +325,7 @@ public class MainActivity extends AppCompatActivity
     private String getTableName(String title) {
 
         if (title.equals(getResources().getString(R.string.leyes_fundamentales))) {
-            return "leyes_fundamentales";
+            return "ley_fundamentals";
         } else if (title.equals(getResources().getString(R.string.leyes))) {
             return "leyes";
         } else if (title.equals(getResources().getString(R.string.codigos))) {
@@ -334,7 +347,7 @@ public class MainActivity extends AppCompatActivity
         if (title.equals(getResources().getString(R.string.leyes_fundamentales))) {
             this.toogleFragment(false);
             this.toogleRecyclerView(true);
-            this.fillAdapter(mDbHelper.selectAllFrom("leyes_fundamentales"));
+            this.fillAdapter(mDbHelper.selectAllFrom("ley_fundamentals"));
         }
         else if (title.equals(getResources().getString(R.string.leyes))) {
             this.toogleFragment(false);
@@ -351,33 +364,24 @@ public class MainActivity extends AppCompatActivity
         else if (title.equals(getResources().getString(R.string.r_legislativo))) {
             this.toogleFragment(false);
             this.toogleRecyclerView(true);
-            this.fillAdapter(mDbHelper.selectAllFrom("leyes"));
+            this.fillAdapter(mDbHelper.selectAllFrom("reglamento_legislativos"));
         }
 
         else if (title.equals(getResources().getString(R.string.r_judicial))) {
             this.toogleFragment(false);
             this.toogleRecyclerView(true);
-            this.fillAdapter(mDbHelper.selectAllFrom("leyes"));
+            this.fillAdapter(mDbHelper.selectAllFrom("reglamento_judicials"));
         }
 
         else if (title.equals(getResources().getString(R.string.r_dependencias))) {
             this.toogleFragment(false);
             this.toogleRecyclerView(true);
-            this.fillAdapter(mDbHelper.selectAllFrom("leyes"));
+            this.fillAdapter(mDbHelper.selectAllFrom("reglamento_dependencias"));
         }
 
         else if (title.equals(getResources().getString(R.string.email))) {
             this.toogleRecyclerView(false);
             this.toogleFragment(true);
-            //URL url = new URL("http://image10.bizrate-images.com/resize?sq=60&uid=2216744464");
-            /*URL url = new URL("http://www.brandemia.org/wp-content/uploads/2012/10/logo_principal.jpg");
-            Bitmap bmp = null;
-            try {
-                bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            */
         } else {
 
         }
@@ -403,11 +407,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void toogleBannerCenter(boolean show) {
-        if (show)
-            findViewById(R.id.fragment_banner).setVisibility(View.VISIBLE);
-
-        else
-            findViewById(R.id.fragment_banner).setVisibility(View.GONE);
+        if (show) {
+            findViewById(R.id.banner_main).setVisibility(View.VISIBLE);
+            findViewById(R.id.btn_banner_main).setVisibility(View.VISIBLE);
+        }
+        else {
+            findViewById(R.id.banner_main).setVisibility(View.GONE);
+            findViewById(R.id.btn_banner_main).setVisibility(View.GONE);
+        }
     }
 
     @Override

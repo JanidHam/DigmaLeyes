@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Environment;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -26,6 +28,7 @@ public class DownLoadManagerHelper {
     }
 
     public void startDownload(String url, String fileName) {
+        this.Context.findViewById(R.id.gif_loading).setVisibility(View.VISIBLE);
 
         downloadManager = (DownloadManager) Context.getSystemService(Context.DOWNLOAD_SERVICE);
 
@@ -48,7 +51,7 @@ public class DownLoadManagerHelper {
         //Enqueue a new download and same the referenceId
         downloadReference = downloadManager.enqueue(request);
 
-        renderMessage("La descarga se ha iniciado.", Toast.LENGTH_LONG);
+        //renderMessage("La descarga se ha iniciado.", Toast.LENGTH_LONG);
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -56,13 +59,15 @@ public class DownLoadManagerHelper {
         public void onReceive(Context context, Intent intent) {
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             if(downloadReference == referenceId) {
-                renderMessage("La descarga finalizó con éxito.", Toast.LENGTH_LONG);
+                Context.findViewById(R.id.gif_loading).setVisibility(View.GONE);
+                //renderMessage("La descarga finalizó con éxito.", Toast.LENGTH_LONG);
             }
         }
     };
 
     public void renderMessage(String message, int time) {
         Toast toast = Toast.makeText(Context, message, time);
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         toast.show();
     }
 }

@@ -3,7 +3,7 @@
     android:orientation="vertical" android:layout_width="300dp"
     android:layout_height="200dp"
     android:gravity="center_vertical|center|center_horizontal"
-    android:visibility="gone"
+    android:visibility="visible"
     >
 
     <ImageButton

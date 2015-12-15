@@ -72,12 +72,15 @@ public class LeyAdapter extends RecyclerView.Adapter<LeyAdapter.LeyViewHolder> {
     public void onBindViewHolder(LeyViewHolder holder, final int i) {
         holder.nombre.setText(items.get(i).getName());
 
-        final String url = utils.getContext().getString(R.string.url_download_pdf);
+        final String urlServer = utils.getContext().getString(R.string.url_server);
+        final String urlSendEmail = utils.getContext().getString(R.string.url_send_email);
+        final String url_document = items.get(i).getUrl();
+        final String document_name = items.get(i).getName();
 
         holder.download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            downLoadHelper.startDownload(url + items.get(i).getUrl(), items.get(i).getName());
+            downLoadHelper.startDownload(urlServer + url_document, document_name);
             }
         });
         holder.send.setOnClickListener(new View.OnClickListener() {
@@ -87,17 +90,20 @@ public class LeyAdapter extends RecyclerView.Adapter<LeyAdapter.LeyViewHolder> {
                 String email = utils.isDefaultEmail();
 
                 if (!email.equals("")) {
-                    String document_name = items.get(i).getUrl();
-                    String document = items.get(i).getName();
-                    new SendEmail(email, document, document_name, context)
-                            .execute(utils.getURL_SEND_EMAIL());
+                    //String document_name = items.get(i).getUrl();
+                    //String document = items.get(i).getName();
+                    new SendEmail(email, url_document, document_name, context)
+                            .execute(urlSendEmail);
+                    return;
                 }
 
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 // Get the layout inflater
                 final LayoutInflater inflater = context.getLayoutInflater();
+
                 builder.setTitle("Escriba el correo!");
+
                 builder.setView(inflater.inflate(R.layout.dialog_message, null))
                         // Add action buttons
                         .setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
@@ -113,25 +119,24 @@ public class LeyAdapter extends RecyclerView.Adapter<LeyAdapter.LeyViewHolder> {
                                     utils.renderMessage("Debe ingresar un email.", Toast.LENGTH_SHORT);
                                     return;
                                 }
+
                                 utils.renderMessage("Enviando mensaje.", Toast.LENGTH_SHORT);
 
-                                String document_name = items.get(i).getUrl();
-                                String document = items.get(i).getName();
-                                new SendEmail(email, document, document_name, context)
-                                        .execute(utils.getURL_SEND_EMAIL());
+                                //String document_name = items.get(i).getUrl();
+                                //String document = items.get(i).getName();
+                                new SendEmail(email, url_document, document_name, context)
+                                        .execute(urlSendEmail);
 
                             }
                         })
                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                //LoginDialogFragment.this.getDialog().cancel();
                             }
                         });
 
                 builder.create();
                 builder.show();
 
-                Log.e("i", "click in send in position " + items.get(i).getUrl());
             }
         });
     }

@@ -2,6 +2,7 @@ package com.digma.digmaleyes.helpers;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -13,7 +14,6 @@ public class Utils {
 
     final String CHECK_EMAIL = "check_email";
     final String DEFAULT_EMAIL = "default_email";
-    final String URL_SEND_EMAIL = "http://digma.mx/pruebasalex/mail-test.php";
 
     public Utils(Activity context) {
         this.context = context;
@@ -32,12 +32,6 @@ public class Utils {
         return this.context;
     }
 
-    public String getURL_SEND_EMAIL() {
-        return this.URL_SEND_EMAIL;
-    }
-
-
-
     public void renderMessage(String message, int time) {
         Toast toast = Toast.makeText(this.context, message, time);
         toast.show();
@@ -47,5 +41,17 @@ public class Utils {
         if (email.equals("")) return false;
 
         return true;
+    }
+
+    public void setTimeOutCloseBanner(int time) {
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        //toogleRecyclerView(true);
+                        //toogleBannerCenter(false);
+                        Log.i("tag", "This'll run 300 milliseconds later");
+                    }
+                },
+                time);
     }
 }

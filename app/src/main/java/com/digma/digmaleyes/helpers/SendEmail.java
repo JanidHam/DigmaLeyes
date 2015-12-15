@@ -7,14 +7,11 @@ import android.widget.Toast;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,13 +26,13 @@ import java.util.List;
  * Created by janidham on 10/12/15.
  */
 public class SendEmail extends AsyncTask<String, Void, JSONObject> {
-    String email, document, document_name;
+    String email, url_document, document_name;
     Activity context;
     Utils utils;
 
-    public SendEmail(String email, String document, String document_name, Activity context) {
+    public SendEmail(String email, String url_document, String document_name, Activity context) {
         this.email = email;
-        this.document = document;
+        this.url_document = url_document;
         this.context = context;
         this.document_name = document_name;
         utils = new Utils(context);
@@ -54,7 +51,7 @@ public class SendEmail extends AsyncTask<String, Void, JSONObject> {
 
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         pairs.add(new BasicNameValuePair("email", this.email));
-        pairs.add(new BasicNameValuePair("document", this.document));
+        pairs.add(new BasicNameValuePair("url_document", this.url_document));
         pairs.add(new BasicNameValuePair("document_name", this.document_name));
 
         String paramsUrl = URLEncodedUtils.format(pairs, "utf-8");
